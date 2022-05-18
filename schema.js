@@ -1,29 +1,39 @@
 import { gql } from 'apollo-server-express';
+import { PubSub } from 'graphql-subscriptions';
+
+const pubsub = new PubSub()
 
 export const typeDefs = gql`
-  type Example {
-    message: String
+  type Post {
+    author: String
+    comment: String
   }
 
   type Query {
-    queryExample: Example
+    posts: [Post]
+  }
+
+  type Subscription {
+    postCreated: Post
   }
 
   type Mutation {
-    mutationExample: Example
+    createPost(author: String, comment: String): Post
   }
 `
 
 export const resolvers = {
-  Query: {
-    queryExample: (parent, args, context) => ({ message: "This is the message from the query resolver"})
+  Query: {},
+  Subscription: {
+    postCreated: {
+      subscribe: () => pubsub.asyncIterator(['POST_CREATED'])
+    }
   },
   Mutation: {
-    mutationExample: (parent, args, context) => {
-      console.log("Perform mutations..")
-      return {
-        message: "This is the message from the mutation resolver"
-      }
+    createPost(parent, args, context) {
+      pubsub.publish('POST_CREATED', { postCreated: args })
+      
+      return args
     }
   }
 }
