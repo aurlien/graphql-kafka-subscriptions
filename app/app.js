@@ -1,3 +1,4 @@
+import 'dotenv/config'
 import { ApolloServer } from "apollo-server-express"
 import { ApolloServerPluginDrainHttpServer } from 'apollo-server-core';
 import { makeExecutableSchema } from "@graphql-tools/schema";
@@ -50,7 +51,7 @@ import { typeDefs, resolvers } from './schema.js'
   const PORT = 4000
   httpServer.listen(PORT, () => {
     console.log(
-      `Server is now running on http://localhost:${PORT}${server.graphqlPath}`,
+      `🚀 Server running on http://localhost:${PORT}${server.graphqlPath}`,
     );
   });
 })()
